@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 
-import { callApi, getDevice, getDeviceEffects} from "frontend/utils/api";
+import { callApi, getDevice, getDeviceEffects } from "frontend/utils/api";
 import { connect } from "react-redux";
 import EffectControl from "frontend/components/EffectControl/EffectControl.jsx";
 import PixelColorGraph from "frontend/components/PixelColorGraph/PixelColorGraph.jsx";
@@ -15,8 +15,8 @@ class DeviceView extends React.Component {
   constructor() {
     super();
     this.state = {
-      device : null,
-      effect : null
+      device: null,
+      effect: null,
     };
   }
 
@@ -25,38 +25,35 @@ class DeviceView extends React.Component {
 
     this.state.device = null;
     getDevice(device_id)
-      .then(device => {
+      .then((device) => {
         this.setState({ device: device });
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
 
     this.state.effect = null;
     getDeviceEffects(device_id)
-      .then(effect => {
+      .then((effect) => {
         this.setState({ effect: effect });
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   }
 
   componentWillReceiveProps(nextProps) {
     var device = null;
-    if (this.props.devicesById)
-    {
+    if (this.props.devicesById) {
       this.state.device = null;
-      device = this.props.devicesById[nextProps.match.params.device_id]
-      this.setState(...this.state, {device: device});
+      device = this.props.devicesById[nextProps.match.params.device_id];
+      this.setState(...this.state, { device: device });
     }
 
-    if(device !== undefined && device !== null)
-    {
+    if (device !== undefined && device !== null) {
       this.state.effect = null;
       getDeviceEffects(device.id)
-      .then(effect => {
-        this.setState({ effect: effect });
-      })
-      .catch(error => console.log(error));
+        .then((effect) => {
+          this.setState({ effect: effect });
+        })
+        .catch((error) => console.log(error));
     }
-  
   }
 
   render() {
@@ -64,16 +61,19 @@ class DeviceView extends React.Component {
     const { device_id } = this.props.match.params;
     const { device, effect } = this.state;
 
-    if (device)
-    {
+    if (device) {
       return (
         <Grid container direction="row" spacing={4}>
           {renderPixelGraph(device, effect)}
           <Grid item xs={12}>
             <Card>
               <CardContent>
-                <EffectControl device={device} effect={effect}/>
+                <EffectControl device={device} effect={effect} />
               </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12}>
+            <Card>
               <CardContent>
                 <MidiControl />
               </CardContent>
@@ -82,36 +82,35 @@ class DeviceView extends React.Component {
         </Grid>
       );
     }
-    return (<p>Loading</p>)
+    return <p>Loading</p>;
   }
 }
-
 
 const renderPixelGraph = (device, effect) => {
   if (device.effect && device.effect.name) {
-    console.log(effect)
+    console.log(effect);
     return (
       <Grid item xs={12}>
         <Card>
-            <CardContent>
-              <PixelColorGraph device={device}/>
-            </CardContent>
+          <CardContent>
+            <PixelColorGraph device={device} />
+          </CardContent>
         </Card>
       </Grid>
-    )
+    );
   }
-}
+};
 
 DeviceView.propTypes = {
   devicesById: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
-  const { devicesById } = state
+  const { devicesById } = state;
 
   return {
-    devicesById
-  }
+    devicesById,
+  };
 }
 
-export default  connect(mapStateToProps)(DeviceView);
+export default connect(mapStateToProps)(DeviceView);

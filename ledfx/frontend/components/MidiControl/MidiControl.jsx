@@ -11,6 +11,7 @@ import Slider from "@material-ui/core/Slider";
 import Input from "@material-ui/core/Input";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
+import Tooltip from '@material-ui/core/Tooltip';
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -46,7 +47,12 @@ class MidiControl extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { status: "null", midiname: "null", brightnessSlider: 0 };
+    this.state = {
+      status: null,
+      midiname: null,
+      brightnessSlider: 0,
+      display: false,
+    };
   }
 
   stopOutputs() {
@@ -73,18 +79,26 @@ class MidiControl extends React.Component {
 
   onMidiIn(ev) {
     var arr = [];
+    const currentStatus = this.state.display;
+
     for (var i = 0; i < ev.data.length; i++) {
       arr.push((ev.data[i] < 16 ? "0" : "") + ev.data[i].toString(16));
     }
     console.log("MIDI:", arr.join(" "));
     if (arr[0] == 97 && arr[1] == 0 && arr[2] != 0) {
       this.props.activatePreset("1");
+      this.setState({
+        display: !currentStatus,
+      });
     }
     if (arr[0] == 97 && arr[1] == 1 && arr[2] != 0) {
       this.props.activatePreset("2");
     }
     if (arr[0] == 97 && arr[1] == 2 && arr[2] != 0) {
       this.props.activatePreset("3");
+    }
+    if (arr[0] == 97 && arr[1] == 3 && arr[2] != 0) {
+      this.props.activatePreset("4");
     }
     if (arr[0] == "b0" && arr[1] == 13 && arr[0] != 0) {
       console.log("Four");
@@ -144,6 +158,10 @@ class MidiControl extends React.Component {
   render() {
     const { activatePreset } = this.props;
     const { brightnessSlider } = this.state;
+    let content = null;
+    if (this.state.display) {
+      content = { backgroundColor: "red" };
+    }
     return (
       <div>
         <Typography variant="h5" color="inherit">
@@ -151,44 +169,194 @@ class MidiControl extends React.Component {
         </Typography>
         <h3>Device </h3>
         <CardActions>
-          <Button onClick={() => this.updateMidi()}>SET MIDI</Button>
+          <Button onClick={() => this.updateMidi()} style = {{backgroundColor:"red", color: "white"}}>SET MIDI</Button>
           <Typography>{this.state.midiname}</Typography>
           <ul></ul>
-          <Typography>Status: {this.state.status}</Typography>
+          <Typography>{this.state.status}</Typography>
         </CardActions>
-        <h3>Presets</h3>
+        <h3>Left</h3>
         <CardActions>
+          <Tooltip title="SCROLL" >
           <Button
             id="midibutton"
             color="primary"
-            size="small"
+            size="large"
             aria-label="Activate"
             variant="contained"
             onClick={() => activatePreset("1")}
           >
             1
           </Button>
+          </Tooltip>
+          <Tooltip title="STROBE">
           <Button
             id="midibutton2"
             color="primary"
-            size="small"
+            size="large"
             aria-label="Activate"
             variant="contained"
             onClick={() => activatePreset("2")}
           >
             2
           </Button>
+          </Tooltip>
+          <Tooltip title="STROBE BOOST">
           <Button
             id="midibutton3"
             color="primary"
-            size="small"
+            size="large"
             aria-label="Activate"
             variant="contained"
             onClick={() => activatePreset("3")}
           >
             3
           </Button>
+          </Tooltip>
+          <Tooltip title="OFF">
+          <Button
+            id="midibutton4"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+            onClick={() => activatePreset("4")}
+          >
+            4
+          </Button>
+          </Tooltip>
           <ul></ul>
+          
+        </CardActions>
+        <CardActions>
+          <Tooltip title="BEAT">
+            <Button
+              id="midibutton5"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+              style={content}
+            >
+              5
+            </Button>
+          </Tooltip>
+          <Tooltip title="SPECTRUM">
+          <Button
+            id="midibutton6"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            6
+          </Button>
+          </Tooltip>
+          <Button
+            id="midibutton7"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            7
+          </Button>
+          <Button
+            id="midibutton8"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            8
+          </Button>
+        </CardActions>
+          <h3>Right</h3>
+          <CardActions>
+          <Tooltip title="SCROLL" >
+          <Button
+            id="midibutton"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            1
+          </Button>
+          </Tooltip>
+          <Tooltip title="STROBE">
+          <Button
+            id="midibutton2"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            2
+          </Button>
+          </Tooltip>
+          <Tooltip title="STROBE BOOST">
+          <Button
+            id="midibutton3"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            3
+          </Button>
+          </Tooltip>
+          <Tooltip title="OFF">
+          <Button
+            id="midibutton4"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            4
+          </Button>
+          </Tooltip>
+          </CardActions>
+          <CardActions>
+          <Button
+            id="midibutton4"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            5
+          </Button>
+          <Button
+            id="midibutton4"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            6
+          </Button>
+          <Button
+            id="midibutton4"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            7
+          </Button>
+          <Button
+            id="midibutton4"
+            color="primary"
+            size="large"
+            aria-label="Activate"
+            variant="contained"
+          >
+            8 
+          </Button>
+          </CardActions>
+          <ul></ul>
+          <CardActions>
           <Typography id="range-slider" gutterBottom>
             Brightness
           </Typography>
@@ -205,7 +373,7 @@ class MidiControl extends React.Component {
             value={brightnessSlider}
           ></Slider>
           <div>{brightnessSlider}</div>
-        </CardActions>
+          </CardActions>
       </div>
     );
   }
