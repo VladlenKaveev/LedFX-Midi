@@ -11,7 +11,7 @@ import Slider from "@material-ui/core/Slider";
 import Input from "@material-ui/core/Input";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
-import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from "@material-ui/core/Tooltip";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -51,7 +51,7 @@ class MidiControl extends React.Component {
       status: null,
       midiname: null,
       brightnessSlider: 0,
-      display: false,
+      activePresetIndex: 0,
     };
   }
 
@@ -86,22 +86,30 @@ class MidiControl extends React.Component {
     }
     console.log("MIDI:", arr.join(" "));
     if (arr[0] == 97 && arr[1] == 0 && arr[2] != 0) {
-      this.props.activatePreset("1");
-      this.setState({
-        display: !currentStatus,
-      });
+      this.selectPreset("1");
     }
     if (arr[0] == 97 && arr[1] == 1 && arr[2] != 0) {
-      this.props.activatePreset("2");
+      this.selectPreset("2");
     }
     if (arr[0] == 97 && arr[1] == 2 && arr[2] != 0) {
-      this.props.activatePreset("3");
+      this.selectPreset("3");
     }
     if (arr[0] == 97 && arr[1] == 3 && arr[2] != 0) {
-      this.props.activatePreset("4");
+      this.selectPreset("4");
+    }
+    if (arr[0] == 97 && arr[1] == 4 && arr[2] != 0) {
+      this.selectPreset("5");
+    }
+    if (arr[0] == 97 && arr[1] == 5 && arr[2] != 0) {
+      this.selectPreset("6");
+    }
+    if (arr[0] == 97 && arr[1] == 6 && arr[2] != 0) {
+      this.selectPreset("7");
+    }
+    if (arr[0] == 97 && arr[1] == 7 && arr[2] != 0) {
+      this.selectPreset("8");
     }
     if (arr[0] == "b0" && arr[1] == 13 && arr[0] != 0) {
-      console.log("Four");
       this.setState({ brightnessSlider: parseInt(arr[2], 16) });
     }
   }
@@ -155,13 +163,19 @@ class MidiControl extends React.Component {
     });
   }
 
+  selectPreset(presetId) {
+    console.log({ activePresetIndex: presetId });
+    this.setState(() => {
+      return { activePresetIndex: presetId };
+    });
+    this.props.activatePreset(presetId);
+  }
+
   render() {
     const { activatePreset } = this.props;
-    const { brightnessSlider } = this.state;
-    let content = null;
-    if (this.state.display) {
-      content = { backgroundColor: "red" };
-    }
+    const { brightnessSlider, activePresetIndex } = this.state;
+    let activeClass = null;
+    activeClass = { backgroundColor: "red" };
     return (
       <div>
         <Typography variant="h5" color="inherit">
@@ -169,63 +183,79 @@ class MidiControl extends React.Component {
         </Typography>
         <h3>Device </h3>
         <CardActions>
-          <Button onClick={() => this.updateMidi()} style = {{backgroundColor:"red", color: "white"}}>SET MIDI</Button>
+          <Button
+            onClick={() => this.updateMidi()}
+            style={{ backgroundColor: "red", color: "white" }}
+          >
+            SET MIDI
+          </Button>
           <Typography>{this.state.midiname}</Typography>
           <ul></ul>
           <Typography>{this.state.status}</Typography>
         </CardActions>
         <h3>Left</h3>
         <CardActions>
-          <Tooltip title="SCROLL" >
-          <Button
-            id="midibutton"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-            onClick={() => activatePreset("1")}
-          >
-            1
-          </Button>
+          <Tooltip title="SCROLL">
+            <Button
+              id="midibutton"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+              onClick={() => {
+                this.selectPreset("1");
+              }}
+              style={activePresetIndex == "1" ? activeClass : null}
+            >
+              1
+            </Button>
           </Tooltip>
           <Tooltip title="STROBE">
-          <Button
-            id="midibutton2"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-            onClick={() => activatePreset("2")}
-          >
-            2
-          </Button>
+            <Button
+              id="midibutton2"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+              onClick={() => {
+                this.selectPreset("2");
+              }}
+              style={activePresetIndex == "2" ? activeClass : null}
+            >
+              2
+            </Button>
           </Tooltip>
           <Tooltip title="STROBE BOOST">
-          <Button
-            id="midibutton3"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-            onClick={() => activatePreset("3")}
-          >
-            3
-          </Button>
+            <Button
+              id="midibutton3"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+              onClick={() => {
+                this.selectPreset("3");
+              }}
+              style={activePresetIndex == "3" ? activeClass : null}
+            >
+              3
+            </Button>
           </Tooltip>
           <Tooltip title="OFF">
-          <Button
-            id="midibutton4"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-            onClick={() => activatePreset("4")}
-          >
-            4
-          </Button>
+            <Button
+              id="midibutton4"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+              onClick={() => {
+                this.selectPreset("4");
+              }}
+              style={activePresetIndex == "4" ? activeClass : null}
+            >
+              4
+            </Button>
           </Tooltip>
           <ul></ul>
-          
         </CardActions>
         <CardActions>
           <Tooltip title="BEAT">
@@ -235,89 +265,108 @@ class MidiControl extends React.Component {
               size="large"
               aria-label="Activate"
               variant="contained"
-              style={content}
+              onClick={() => {
+                this.selectPreset("5");
+              }}
+              style={activePresetIndex == "5" ? activeClass : null}
             >
               5
             </Button>
           </Tooltip>
           <Tooltip title="SPECTRUM">
-          <Button
-            id="midibutton6"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-          >
-            6
-          </Button>
+            <Button
+              id="midibutton6"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+              onClick={() => {
+                this.selectPreset("6");
+              }}
+              style={activePresetIndex == "6" ? activeClass : null}
+            >
+              6
+            </Button>
           </Tooltip>
-          <Button
-            id="midibutton7"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-          >
-            7
-          </Button>
-          <Button
-            id="midibutton8"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-          >
-            8
-          </Button>
+          <Tooltip title="RAINBOW">
+            <Button
+              id="midibutton7"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+              onClick={() => {
+                this.selectPreset("7");
+              }}
+              style={activePresetIndex == "7" ? activeClass : null}
+            >
+              7
+            </Button>
+          </Tooltip>
+          <Tooltip title="WAVE">
+            <Button
+              id="midibutton8"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+              onClick={() => {
+                this.selectPreset("8");
+              }}
+              style={activePresetIndex == "8" ? activeClass : null}
+            >
+              8
+            </Button>
+          </Tooltip>
         </CardActions>
-          <h3>Right</h3>
-          <CardActions>
-          <Tooltip title="SCROLL" >
-          <Button
-            id="midibutton"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-          >
-            1
-          </Button>
+        <h3>Right</h3>
+        <CardActions>
+          <Tooltip title="SCROLL">
+            <Button
+              id="midibutton"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+            >
+              1
+            </Button>
           </Tooltip>
           <Tooltip title="STROBE">
-          <Button
-            id="midibutton2"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-          >
-            2
-          </Button>
+            <Button
+              id="midibutton2"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+            >
+              2
+            </Button>
           </Tooltip>
           <Tooltip title="STROBE BOOST">
-          <Button
-            id="midibutton3"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-          >
-            3
-          </Button>
+            <Button
+              id="midibutton3"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+            >
+              3
+            </Button>
           </Tooltip>
           <Tooltip title="OFF">
-          <Button
-            id="midibutton4"
-            color="primary"
-            size="large"
-            aria-label="Activate"
-            variant="contained"
-          >
-            4
-          </Button>
+            <Button
+              id="midibutton4"
+              color="primary"
+              size="large"
+              aria-label="Activate"
+              variant="contained"
+            >
+              4
+            </Button>
           </Tooltip>
-          </CardActions>
-          <CardActions>
+        </CardActions>
+        <CardActions>
           <Button
             id="midibutton4"
             color="primary"
@@ -352,11 +401,11 @@ class MidiControl extends React.Component {
             aria-label="Activate"
             variant="contained"
           >
-            8 
+            8
           </Button>
-          </CardActions>
-          <ul></ul>
-          <CardActions>
+        </CardActions>
+        <ul></ul>
+        <CardActions>
           <Typography id="range-slider" gutterBottom>
             Brightness
           </Typography>
@@ -373,7 +422,7 @@ class MidiControl extends React.Component {
             value={brightnessSlider}
           ></Slider>
           <div>{brightnessSlider}</div>
-          </CardActions>
+        </CardActions>
       </div>
     );
   }
@@ -383,6 +432,9 @@ MidiControl.propTypes = {
   classes: PropTypes.object.isRequired,
   preset: PropTypes.object.isRequired,
 };
+
+if (activatePreset("1")) {
+}
 
 const mapDispatchToProps = (dispatch) => ({
   activatePreset: (presetId) => dispatch(activatePreset(presetId)),
