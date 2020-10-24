@@ -7,7 +7,7 @@ import {
     RECEIVE_DEVICE_EFFECT_UPDATE,
     RECEIVE_DEVICE_ENTRY
 } from 'frontend/actions'
-
+3
 function device(
     state = {
         isFetching: false,

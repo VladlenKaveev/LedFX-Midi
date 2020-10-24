@@ -52,6 +52,7 @@ class MidiControl extends React.Component {
       midiname: null,
       brightnessSlider: 0,
       activePresetIndex: 0,
+      strobeSlider: 0,
     };
   }
 
@@ -111,6 +112,18 @@ class MidiControl extends React.Component {
     }
     if (arr[0] == "b0" && arr[1] == 13 && arr[0] != 0) {
       this.setState({ brightnessSlider: parseInt(arr[2], 16) });
+    }
+    if (arr[0] == "b6" && arr[1] == 17 && arr[0] != 0) {
+      this.setState({ strobeSlider: parseInt(arr[2], 16) });
+    }
+    if (this.state.strobeSlider == 2) {
+      this.selectPreset("off");
+    }
+    if (this.state.strobeSlider == 64) {
+      this.selectPreset("strobe1");
+    }
+    if (this.state.strobeSlider == 127) {
+      this.selectPreset("strobe2");
     }
   }
 
@@ -173,7 +186,7 @@ class MidiControl extends React.Component {
 
   render() {
     const { activatePreset } = this.props;
-    const { brightnessSlider, activePresetIndex } = this.state;
+    const { brightnessSlider, activePresetIndex, strobeSlider } = this.state;
     let activeClass = null;
     activeClass = { backgroundColor: "red" };
     return (
@@ -418,10 +431,29 @@ class MidiControl extends React.Component {
             step={1}
             marks
             min={0}
-            max={127}
+            max={120}
             value={brightnessSlider}
           ></Slider>
           <div>{brightnessSlider}</div>
+        </CardActions>
+        <ul></ul>
+        <CardActions>
+          <Typography id="range-slider" gutterBottom>
+            STROBE BAZUKA
+          </Typography>
+          <ul></ul>
+          <Slider
+            id="midislider"
+            defaultValue={0}
+            aria-labelledby="discrete-slider"
+            valueLabelDisplay="auto"
+            step={1}
+            marks
+            min={0}
+            max={127}
+            value={strobeSlider}
+          ></Slider>
+          <div>{strobeSlider}</div>
         </CardActions>
       </div>
     );
